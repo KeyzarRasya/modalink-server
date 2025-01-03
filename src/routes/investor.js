@@ -46,7 +46,7 @@ router.post("/buy", async (req, res) => {
                 headers: {
                     accept: "application/json",
                     'content-type': 'application/json',
-                    authorization: 'Basic U0ItTWlkLXNlcnZlci0wWmsxRnBKTVdTQndaN1pMRFRUeGtndXg6' // Ganti dengan key otorisasi yang benar
+                    authorization: `Basic ${btoa(process.env.SERVER_KEY)}` // Ganti dengan key otorisasi yang benar
                 }
             }
         );
@@ -58,5 +58,23 @@ router.post("/buy", async (req, res) => {
         res.status(500).json({ error: 'Failed to create transaction' });
     }
 });
+
+router.get('/finish', async(req, res) => {
+    const {order_id, status_code} = req.query
+    const response = await axios({
+        method:"GET",
+        url:`https://api.sandbox.midtrans.com/v2/${order_id}/status`,
+        headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json',
+            'Authorization':`Basic ${btoa(process.env.SERVER_KEY)}`
+        }
+    })
+    const data = response.data;
+    if(data.status_code !== "200" && data.transaction_status !== "settlement"){
+        return {response:data, status:401};
+    }
+    console.log(data);
+})
 
 module.exports = router;
