@@ -1,6 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcrypt")
 const Investor = require("../model/Investor")
+const Umkm = require("../model/Umkm")
+const Offer = require("../model/Offer")
 const midtrans = require('midtrans-client')
 const {v4} = require('uuid')
 const axios = require('axios')
@@ -29,13 +31,28 @@ router.post("/login", async(req, res) => {
     return isPassValid ? res.status(200).send({message:"Success Login", account:findInvestor}) : res.status(400).send({message:"wrong password"})
 })
 
-router.post("/buy", async (req, res) => {
+router.post("/buy/:investorId/:offerId", async (req, res) => {
+    const {investorId, offerId} = req.params;
+    const findInvestor = await Investor.findById(investorId);
+    const findOffer = await Offer.findById(offerId);
+    if(!findInvestor && !findOffer){
+        return res.status(400).send({message:"Data not found"})
+    }
     try {
         const transactionData = {
             transaction_details: {
                 order_id: v4(),
                 gross_amount: 2000000
             },
+            item_details:{
+                id:offerId,
+                price:findOffer.price
+            },
+            customer_details:{
+                first_name:findInvestor.fullName,
+                email:findInvestor.email,
+                phone:findInvestor._id
+            }
         };
 
         // Melakukan request POST ke Midtrans menggunakan axios.post
