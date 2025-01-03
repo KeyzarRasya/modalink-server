@@ -8,7 +8,7 @@ const cors = require('cors')
 
 const {DATABASE, URI, PORT} = envConfig(process.env);
 
-mongoose.connect(DATABASE)
+mongoose.connect(process.env.ENV == "LOCAL" ? process.env.MONGODB_LOCAL : MONGODB_URI)
 .then(res => console.log("Connected to database"))
 .catch(err => console.log(err))
 
