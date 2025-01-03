@@ -75,6 +75,7 @@ router.get('/finish', async(req, res) => {
         return {response:data, status:401};
     }
     console.log(data);
+    res.send(data);
 })
 
 module.exports = router;
