@@ -46,7 +46,7 @@ router.post("/buy", async (req, res) => {
                 headers: {
                     accept: "application/json",
                     'content-type': 'application/json',
-                    authorization: `Basic ${btoa(process.env.SERVER_KEY)}` // Ganti dengan key otorisasi yang benar
+                    authorization: `Basic ${process.env.AUTH_STRING}` // Ganti dengan key otorisasi yang benar
                 }
             }
         );
@@ -67,7 +67,7 @@ router.get('/finish', async(req, res) => {
         headers:{
             'Accept':'application/json',
             'Content-Type':'application/json',
-            'Authorization':`Basic ${btoa(process.env.SERVER_KEY)}`
+            'Authorization':`Basic ${process.env.AUTH_STRING}`
         }
     })
     const data = response.data;
